@@ -95,4 +95,83 @@ document.addEventListener("DOMContentLoaded", function () {
         el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
         fadeObserver.observe(el);
     });
+
+    // Project slider functionality
+    const sliderContainer = document.querySelector('.slider-container');
+    const sliderCards = document.querySelectorAll('.slider-card');
+    const prevButton = document.querySelector('.slider-nav button:first-child');
+    const nextButton = document.querySelector('.slider-nav button:last-child');
+    const sliderDots = document.querySelector('.slider-dots');
+
+    let currentSlide = 0;
+    const totalSlides = sliderCards.length;
+
+    // Initialize slider
+    function initSlider() {
+        // Create dots
+        sliderDots.innerHTML = '';
+        for (let i = 0; i < totalSlides; i++) {
+            const dot = document.createElement('div');
+            dot.classList.add('slider-dot');
+            if (i === 0) dot.classList.add('active');
+            dot.addEventListener('click', () => goToSlide(i));
+            sliderDots.appendChild(dot);
+        }
+
+        updateSlider();
+    }
+
+    // Update slider positions
+    function updateSlider() {
+        sliderCards.forEach((card, index) => {
+            card.classList.remove('active', 'prev', 'next', 'prev-2', 'next-2');
+
+            if (index === currentSlide) {
+                card.classList.add('active');
+            } else if (index === currentSlide - 1 || index === currentSlide + totalSlides - 1) {
+                card.classList.add('prev');
+            } else if (index === currentSlide + 1 || index === currentSlide - totalSlides + 1) {
+                card.classList.add('next');
+            } else if (index === currentSlide - 2 || index === currentSlide + totalSlides - 2) {
+                card.classList.add('prev-2');
+            } else if (index === currentSlide + 2 || index === currentSlide - totalSlides + 2) {
+                card.classList.add('next-2');
+            }
+        });
+
+        // Update active dot
+        const dots = document.querySelectorAll('.slider-dot');
+        dots.forEach((dot, index) => {
+            if (index === currentSlide) {
+                dot.classList.add('active');
+            } else {
+                dot.classList.remove('active');
+            }
+        });
+    }
+
+    // Go to next slide
+    function nextSlide() {
+        currentSlide = (currentSlide + 1) % totalSlides;
+        updateSlider();
+    }
+
+    // Go to previous slide
+    function prevSlide() {
+        currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+        updateSlider();
+    }
+
+    // Go to specific slide
+    function goToSlide(index) {
+        currentSlide = index % totalSlides;
+        updateSlider();
+    }
+
+    // Event listeners
+    if (nextButton) nextButton.addEventListener('click', nextSlide);
+    if (prevButton) prevButton.addEventListener('click', prevSlide);
+
+    // Initialize slider after a short delay to ensure all elements are loaded
+    setTimeout(initSlider, 100);
 });
